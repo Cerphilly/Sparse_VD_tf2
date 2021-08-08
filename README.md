@@ -1,7 +1,7 @@
 # Sparse_VD_tf2
 Implementation of Sparse Variational Dropout in Tensorflow2!
 
-Original paper: https://arxiv.org/pdf/1701.05369.pdf
+Original paper: Variational Dropout Sparsifies Deep Neural Networks(ICML 2017) https://arxiv.org/pdf/1701.05369.pdf
 
 Official repo: https://github.com/bayesgroup/variational-dropout-sparsifies-dnn
 
