@@ -1,12 +1,14 @@
 import tensorflow as tf
 import numpy as np
+from tensorflow.python.keras import activations
 
 class VariationalDense(tf.keras.layers.Layer):
-    def __init__(self, output_dim, use_bias=True, threshold=3.0, kernel_initializer='glorot_normal', bias_initializer='zeros'):
+    def __init__(self, output_dim, use_bias=True, threshold=3.0, activation=None, kernel_initializer='glorot_normal', bias_initializer='zeros'):
         super(VariationalDense, self).__init__()
         self.output_dim = output_dim
         self.use_bias = use_bias
         self.threshold = threshold
+        self.activation = activations.get(activation)
 
         self.kernel_initializer = kernel_initializer
         self.bias_initializer = bias_initializer
@@ -62,6 +64,8 @@ class VariationalDense(tf.keras.layers.Layer):
             output = tf.matmul(input, self.weight)
             if self.use_bias == True:
                 output += self.bias
+            if self.activation is not None:
+                output = self.activation(output)
 
             return output
 
@@ -69,8 +73,11 @@ class VariationalDense(tf.keras.layers.Layer):
             output = tf.matmul(input, self.sparse_theta)
             if self.use_bias == True:
                 output += self.bias
+            if self.activation is not None:
+                output = self.activation(output)
 
             return output
+
 
 
 if __name__ == '__main__':

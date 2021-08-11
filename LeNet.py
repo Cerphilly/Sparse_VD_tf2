@@ -68,7 +68,7 @@ class VariationalLeNet(tf.keras.Model):
 if __name__ == '__main__':
     np.random.seed(1234)
     tf.random.set_seed(1234)
-
+    tf.config.set_visible_devices([], 'GPU')
     @tf.function
     def compute_loss(label, pred, reg):
         return criterion(label, pred) + reg
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     '''
     Train model
     '''
-    epochs = 10
+    epochs = 20
     batch_size = 100
     n_batches = x_train.shape[0] // batch_size
 

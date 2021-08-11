@@ -1,14 +1,21 @@
 import tensorflow as tf
 import numpy as np
 
+from tensorflow.python.keras import activations
+
 class VariationalConv2d(tf.keras.layers.Layer):
-    def __init__(self, kernel_size, stride, padding='SAME', threshold=3.0, kernel_initializer='glorot_normal', bias_initializer='zeros'):
+    def __init__(self, kernel_size, stride, padding='SAME', threshold=3.0, activation=None, data_format='channels_last', kernel_initializer='glorot_normal', bias_initializer='zeros'):
         super(VariationalConv2d, self).__init__()
         assert len(kernel_size) == 4#kernel_size: [filter_height, filter_width, in_channels, out_channels]
         self.kernel_size = kernel_size
         self.stride = stride
         self.padding = padding
         self.threshold = threshold
+        self.activation = activations.get(activation)
+        if data_format == 'channels_first':
+            self.data_format = 'NCHW'
+        else:
+            self.data_format = 'NHWC'
 
         self.kernel_initializer = kernel_initializer
         self.bias_initializer = bias_initializer
@@ -58,14 +65,20 @@ class VariationalConv2d(tf.keras.layers.Layer):
         if not sparse:
             sigma = tf.sqrt(tf.exp(self.log_alpha) * theta * theta)
             self.weight = theta + tf.random.normal(tf.shape(theta), 0.0, 1.0) * sigma
-            output = tf.nn.conv2d(input, self.weight, self.stride, self.padding)
+            output = tf.nn.conv2d(input, self.weight, self.stride, self.padding, self.data_format)
+
+            if self.activation is not None:
+                output = self.activation(output)
 
             return output
 
         else:
-            output = tf.nn.conv2d(input, self.sparse_theta, self.stride, self.padding)
+            output = tf.nn.conv2d(input, self.sparse_theta, self.stride, self.padding, self.data_format)
+            if self.activation is not None:
+                output = self.activation(output)
 
             return output
+
 
 
 
